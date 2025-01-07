@@ -40,13 +40,13 @@ export async function errorHandler(
   }
 
   // Errores de Fastify
-  //   if (error instanceof FastifyError) {
-  //     return reply.status(error.statusCode ?? 500).send({
-  //       statusCode: error.statusCode ?? 500,
-  //       error: error.name,
-  //       message: error.message,
-  //     });
-  //   }
+  if ('statusCode' in error) {
+    return reply.status(error.statusCode ?? 500).send({
+      statusCode: error.statusCode ?? 500,
+      error: error.name,
+      message: error.message,
+    });
+  }
 
   // Errores no manejados
   return reply.status(500).send({

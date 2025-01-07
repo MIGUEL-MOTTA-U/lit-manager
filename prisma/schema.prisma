@@ -21,3 +21,14 @@ model User {
   role      Role      @default(USER)
   password  String    
 }
+
+model Litt {
+  id          String      @id @default(uuid())
+  client      String      @db.VarChar(255)
+  company     String      @db.VarChar(255)
+  estateName  String      @db.VarChar(255)
+  phone       String?     @db.VarChar(20)
+  email       String?     @db.VarChar(255)
+  estateId    String?      @db.VarChar(255)
+  createdAt   DateTime    @default(now())
+}

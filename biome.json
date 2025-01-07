@@ -33,11 +33,15 @@
         "noNonNullAssertion": "error",
         "useTemplate": "error"
       }
-    }
+    },
+    "ignore": ["experimentalDecorators"]
   },
   "javascript": {
     "formatter": {
       "quoteStyle": "single"
+    },
+    "parser": {
+      "unsafeParameterDecoratorsEnabled": true
     }
   }
 }

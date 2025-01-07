@@ -1,10 +1,13 @@
-import { fastify, type FastifyInstance } from 'fastify';
-import fastifyHelmet from '@fastify/helmet';
+import 'reflect-metadata';
 import fastifyCors from '@fastify/cors';
+import fastifyHelmet from '@fastify/helmet';
 import fastifyRateLimit from '@fastify/rate-limit';
+import { type FastifyInstance, fastify } from 'fastify';
+import { container } from './config/container.js';
 import { config } from './config/env.js';
-import { errorHandler } from './plugins/errorHandler.js';
 import { validateEnv } from './config/env.js';
+import { LitManagerController } from './modules/lit-manager/controller/lit-manager-controller.js';
+import { errorHandler } from './plugins/errorHandler.js';
 
 export async function buildServer(): Promise<FastifyInstance> {
   validateEnv();
@@ -57,7 +60,7 @@ export async function buildServer(): Promise<FastifyInstance> {
     request.log.info({ url: request.url, method: request.method }, 'incoming request');
   });
 
-  server.addHook('onError', async (request, reply, error) => {
+  server.addHook('onError', async (request, _reply, error) => {
     request.log.error(error, 'Unhandled error');
   });
 
@@ -66,21 +69,23 @@ export async function buildServer(): Promise<FastifyInstance> {
 
 export async function startServer() {
   const server = await buildServer();
-  server.get('/', async (req, res) =>{
-    return {hello:'World!'}
-  })
+  const litManagerController = container.resolve(LitManagerController);
   try {
+    litManagerController.registerRoutes(server);
     const port = config.server.port;
-    server.listen({
-      port, 
-      host: '0.0.0.0'
-    }, (err, address) => {
-      if(err) {
-        server.log.error(err);
-        process.exit(1);
-      }
-      server.log.info(`The server is running on address: ${address}`)
-    })
+    server.listen(
+      {
+        port,
+        host: '0.0.0.0',
+      },
+      (err, address) => {
+        if (err) {
+          server.log.error(err);
+          process.exit(1);
+        }
+        server.log.info(`The server is running on address: ${address}`);
+      },
+    );
   } catch (err) {
     server.log.error(err);
     process.exit(1);
