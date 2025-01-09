@@ -1,4 +1,5 @@
 import 'reflect-metadata';
+import fastifyCookie from '@fastify/cookie';
 import fastifyCors from '@fastify/cors';
 import fastifyHelmet from '@fastify/helmet';
 import fastifyRateLimit from '@fastify/rate-limit';
@@ -8,7 +9,6 @@ import { config } from './config/env.js';
 import { validateEnv } from './config/env.js';
 import { LitManagerController } from './modules/lit-manager/controller/lit-manager-controller.js';
 import { errorHandler } from './plugins/errorHandler.js';
-
 export async function buildServer(): Promise<FastifyInstance> {
   validateEnv();
 
@@ -69,8 +69,9 @@ export async function buildServer(): Promise<FastifyInstance> {
 
 export async function startServer() {
   const server = await buildServer();
-  const litManagerController = container.resolve(LitManagerController);
   try {
+    server.register(fastifyCookie);
+    const litManagerController = container.resolve(LitManagerController);
     litManagerController.registerRoutes(server);
     const port = config.server.port;
     server.listen(

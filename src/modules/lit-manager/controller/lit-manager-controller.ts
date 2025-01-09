@@ -6,68 +6,74 @@ import type { LitManagerService } from '../services/interfaces/lit-manager-servi
 export class LitManagerController {
   constructor(@inject('LitManagerService') private litManagerService: LitManagerService) {}
 
-  async index(req: FastifyRequest, res: FastifyReply): Promise<void> {
-    try {
-      await this.litManagerService.getLits();
-    } catch (err) {
-      console.log(`There has been an error with the service ${err}`);
-    }
-    return res.send('Hola Sapa este es el index xD');
+  async index(_req: FastifyRequest, res: FastifyReply): Promise<void> {
+    return res.status(200).send('Lit Managger Index');
   }
 
-  async auth(req: FastifyRequest, res: FastifyReply): Promise<void> {
-    return res.send('Feature');
+  async auth(_req: FastifyRequest, res: FastifyReply): Promise<void> {
+    return res.status(200).send('/auth');
+  }
+
+  async getLits(req: FastifyRequest, res: FastifyReply): Promise<void> {
+    const lits = await this.litManagerService.getLits(req.query);
+    return res.status(200).send(lits);
   }
 
   async litById(req: FastifyRequest, res: FastifyReply): Promise<void> {
-    return res.send('Lit by id {lit id}');
+    const lit = await this.litManagerService.getLitById(req.query);
+    return res.status(200).send(lit);
   }
 
-  async litsNotified(req: FastifyRequest, res: FastifyReply): Promise<void> {
-    return res.send('Lits Notified with pagination {size, current page}');
+  async createLit(req: FastifyRequest, res: FastifyReply): Promise<void> {
+    const created = await this.litManagerService.createLit(req.body);
+    return res.status(201).send(created);
   }
 
-  async litsReceived(req: FastifyRequest, res: FastifyReply): Promise<void> {
-    return res.send('Lits Received the date {date} with pagination');
+  async deleteLit(req: FastifyRequest, res: FastifyReply): Promise<void> {
+    await this.litManagerService.deleteLit(req.query);
+    return res.status(204);
   }
 
   async litsByName(req: FastifyRequest, res: FastifyReply): Promise<void> {
-    return res.send('Lits client name {client name} with pagination');
+    const lits = await this.litManagerService.getLitsByName(req.query);
+    return res.status(200).send(lits);
   }
 
   async litsByPhone(req: FastifyRequest, res: FastifyReply): Promise<void> {
-    return res.send('Lits by client phone {client phone number} with pagination');
+    const lits = await this.litManagerService.getLitsByPhone(req.query);
+    return res.status(200).send(lits);
   }
 
   async litByEstate(req: FastifyRequest, res: FastifyReply): Promise<void> {
-    return res.send('Lits by estate Id {estate id} with pagination');
+    const lits = await this.litManagerService.getLitsByEstate(req.query);
+    return res.status(200).send(lits);
   }
 
-  async notificationInfo(req: FastifyRequest, res: FastifyReply): Promise<void> {
+  async notificationInfo(_req: FastifyRequest, res: FastifyReply): Promise<void> {
     return res.send('Notification information send to the clients');
   }
 
-  async updateNotification(req: FastifyRequest, res: FastifyReply): Promise<void> {
+  async updateNotification(_req: FastifyRequest, res: FastifyReply): Promise<void> {
     return res.send('Update information send to the clients');
   }
 
-  async logIn(req: FastifyRequest, res: FastifyReply): Promise<void> {
+  async logIn(_req: FastifyRequest, res: FastifyReply): Promise<void> {
     return res.send('log in the user {email and password}');
   }
 
-  async logOut(req: FastifyRequest, res: FastifyReply): Promise<void> {
+  async logOut(_req: FastifyRequest, res: FastifyReply): Promise<void> {
     return res.send('log out the user');
   }
 
-  async createUser(req: FastifyRequest, res: FastifyReply): Promise<void> {
+  async createUser(_req: FastifyRequest, res: FastifyReply): Promise<void> {
     return res.send('create the user {body DTO}');
   }
 
-  async getUser(req: FastifyRequest, res: FastifyReply): Promise<void> {
+  async getUser(_req: FastifyRequest, res: FastifyReply): Promise<void> {
     return res.send('get the user by id');
   }
 
-  async updatePassword(req: FastifyRequest, res: FastifyReply): Promise<void> {
+  async updatePassword(_req: FastifyRequest, res: FastifyReply): Promise<void> {
     return res.send('update the password by the provided');
   }
 
@@ -75,9 +81,10 @@ export class LitManagerController {
   registerRoutes(server: FastifyInstance): void {
     server.get('/', (req, res) => this.index(req, res));
     server.get('/auth', (req, res) => this.auth(req, res));
-    server.get('/lit/:id', (req, res) => this.litById(req, res));
-    server.get('/lits-notified', (req, res) => this.litsNotified(req, res));
-    server.get('/lits-received', (req, res) => this.litsReceived(req, res));
+    server.get('/lit', (req, res) => this.litById(req, res));
+    server.post('/lit', (req, res) => this.createLit(req, res));
+    server.delete('/lit', (req, res) => this.deleteLit(req, res));
+    server.get('/lits', (req, res) => this.getLits(req, res));
     server.get('/lits-by-name', (req, res) => this.litsByName(req, res));
     server.get('/lits-by-phone', (req, res) => this.litsByPhone(req, res));
     server.get('/lits-by-estate', (req, res) => this.litByEstate(req, res));

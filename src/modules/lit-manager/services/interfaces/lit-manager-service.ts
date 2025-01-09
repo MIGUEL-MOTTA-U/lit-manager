@@ -1,14 +1,14 @@
-import type { LitDTO, NotificationDTO, PaginatedResult } from '../../models/dtos.js';
+import type { LitOutputDTO, NotificationDTO, PaginatedResult } from '../../models/dtos.js';
 
 export interface LitManagerService {
-  getLits(): Promise<PaginatedResult<LitDTO>>;
-  getLitsNotified(): Promise<PaginatedResult<LitDTO>>;
-  getLitsReceived(): Promise<PaginatedResult<LitDTO>>;
-  getLitsById(id: string): Promise<LitDTO>;
-  getLitsByPhone(phone: string): Promise<PaginatedResult<LitDTO>>;
-  getLitsByName(name: string): Promise<PaginatedResult<LitDTO>>;
-  getLitsByEstate(estateName: string): Promise<PaginatedResult<LitDTO>>;
+  getLits(data: unknown): Promise<PaginatedResult<LitOutputDTO>>;
+  getLitById(data: unknown): Promise<LitOutputDTO>;
+  getLitsByPhone(data: unknown): Promise<PaginatedResult<LitOutputDTO>>;
+  getLitsByName(data: unknown): Promise<PaginatedResult<LitOutputDTO>>;
+  getLitsByEstate(data: unknown): Promise<PaginatedResult<LitOutputDTO>>;
+  createLit(data: unknown): Promise<LitOutputDTO>;
+  deleteLit(data: unknown): Promise<void>;
   getNotificationInfo(): Promise<NotificationDTO>;
-  updateNotification(litDTO: LitDTO): Promise<void>;
+  updateNotification(notification: NotificationDTO): Promise<void>;
 }
 export type { LitManagerService as default };

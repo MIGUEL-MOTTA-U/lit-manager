@@ -1,6 +1,7 @@
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import type { FastifyError, FastifyReply, FastifyRequest } from 'fastify';
 import { ZodError } from 'zod';
+import { LitManagerExceptions } from '../modules/lit-manager/models/exceptions.js';
 
 export async function errorHandler(
   error: FastifyError | Error,
@@ -9,16 +10,25 @@ export async function errorHandler(
 ) {
   request.log.error(error);
 
-  // Errores de Zod (validación)
+  // My own exceptions
+  if (error instanceof LitManagerExceptions) {
+    return reply.status(error.status).send({
+      statusCode: error.status,
+      error: 'Bad request',
+      message: error.message,
+    });
+  }
+
+  // Zod validation exceptions
   if (error instanceof ZodError) {
     return reply.status(400).send({
       statusCode: 400,
       error: 'Validation Error',
-      message: error.issues,
+      message: 'Bad request',
     });
   }
 
-  // Errores de Prisma
+  // Prisma exceptions
   if (error instanceof PrismaClientKnownRequestError) {
     // P2002: Unique constraint violation
     if (error.code === 'P2002') {
@@ -39,12 +49,12 @@ export async function errorHandler(
     }
   }
 
-  // Errores de Fastify
+  // Fastify exceptions
   if ('statusCode' in error) {
     return reply.status(error.statusCode ?? 500).send({
       statusCode: error.statusCode ?? 500,
-      error: error.name,
-      message: error.message,
+      error: 'Server Error',
+      message: 'An internal server error occurred',
     });
   }
 
