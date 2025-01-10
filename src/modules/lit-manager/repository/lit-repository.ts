@@ -1,5 +1,5 @@
-import { injectable } from 'tsyringe';
-import { prisma } from '../../../lib/prisma.js';
+import type { PrismaClient } from '@prisma/client';
+import { inject, injectable } from 'tsyringe';
 import {
   type LitInputDTO,
   type LitOutputDTO,
@@ -11,7 +11,10 @@ import { LitManagerExceptions } from '../models/exceptions.js';
 
 @injectable()
 export class LitRepository {
-  private repository = prisma.litt;
+  private repository;
+  constructor(@inject('PrismaClient') private prismaClient: PrismaClient) {
+    this.repository = this.prismaClient.litt;
+  }
   async getAll(size: number, page: number): Promise<PaginatedResult<LitOutputDTO>> {
     const queryParams = await this.calculateParams(size, page, {});
     const query = await this.repository.findMany({
@@ -30,7 +33,7 @@ export class LitRepository {
     });
   }
 
-  async create(litDTO: LitInputDTO) {
+  async create(litDTO: LitInputDTO): Promise<LitOutputDTO> {
     const created = await this.repository.create({
       data: {
         client: litDTO.client,

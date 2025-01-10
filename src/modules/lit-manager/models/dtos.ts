@@ -1,6 +1,6 @@
 import { z } from 'zod';
 const UserRoleEnum = z.enum(['USER', 'ADMIN']);
-
+const phoneRegex = /^(\+?[1-9]{1,4}[ -]?)?(\(?\d{1,5}\)?[ -]?)?[\d -]{7,15}$/;
 const emptyField = 'El campo no puede ser nulo';
 
 function nonEmptyString() {
@@ -60,8 +60,8 @@ const LitInputSchema = z.object({
   client: nonEmptyString(),
   company: nonEmptyString(),
   estateName: nonEmptyString(),
-  phone: z.string().nullable().optional(),
-  email: z.string().nullable().optional(),
+  phone: z.string().regex(phoneRegex).nullable().optional(),
+  email: z.string().email().nullable().optional(),
   estateId: z.string().nullable().optional(),
 });
 
