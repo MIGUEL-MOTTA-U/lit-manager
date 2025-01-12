@@ -143,7 +143,7 @@ export class LitRepository {
         id: litId,
       },
     });
-    return ;
+    return;
   }
 
   private async calculateParams(
