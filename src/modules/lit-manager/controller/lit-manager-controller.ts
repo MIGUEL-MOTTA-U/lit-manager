@@ -31,7 +31,7 @@ export class LitManagerController {
 
   async deleteLit(req: FastifyRequest, res: FastifyReply): Promise<void> {
     await this.litManagerService.deleteLit(req.query);
-    return res.status(204);
+    return res.send().status(204);
   }
 
   async litsByName(req: FastifyRequest, res: FastifyReply): Promise<void> {

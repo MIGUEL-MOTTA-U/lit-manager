@@ -191,7 +191,6 @@ describe('LitRepository', () => {
       prisma.litt.count.mockResolvedValue(lits.length);
       // Act
       const result = await repository.getLitsByName(size, page, name);
-      console.log(result);
       // Assert
       expect(result.page).toBe(page);
       expect(result.data).toHaveLength(lits.length);
@@ -233,7 +232,6 @@ describe('LitRepository', () => {
       prisma.litt.count.mockResolvedValue(lits.length);
       // Act
       const result = await repository.getLitsByName(size, page, name);
-      console.log(result);
       // Assert
       expect(result.page).toBe(page);
       expect(result.data).toHaveLength(lits.length);
@@ -254,13 +252,179 @@ describe('LitRepository', () => {
       prisma.litt.count.mockResolvedValue(0);
       // Act
       const result = await repository.getLitsByName(size, page, name);
-      console.log(result);
       // Assert
       expect(result.page).toBe(page);
       expect(result.data).toHaveLength(0);
       expect(result.total).toBe(0);
       expect(result.totalPages).toBe(0);
       expect(result.data).toMatchObject([]);
+    });
+  });
+
+  describe('getLitsByPhone', () => {
+    it('should return lits by phone number', async () => {
+      // Arrange
+      const lits = [
+        {
+          id: '1',
+          client: 'Test Client',
+          company: 'Test Company',
+          estateName: 'Test Estate',
+          phone: '1234567890',
+          email: 'test@test.com',
+          estateId: '1',
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+        {
+          id: '2',
+          client: 'Test Client 2',
+          company: 'Test Company',
+          estateName: 'Test Estate',
+          phone: '1234567890',
+          email: 'test2@test.com',
+          estateId: '2',
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+      ];
+
+      const { size, page, clienPhone } = { size: 10, page: 1, clienPhone: '123456' };
+      prisma.litt.findMany.mockResolvedValue(lits);
+      prisma.litt.count.mockResolvedValue(lits.length);
+
+      // Act
+      const result = await repository.getLitsByPhone(size, page, clienPhone);
+
+      // Assert
+      expect(result.page).toBe(page);
+      expect(result.data).toHaveLength(lits.length);
+      expect(result.total).toBe(lits.length);
+      expect(result.totalPages).toBe(1);
+      expect(prisma.litt.findMany).toHaveBeenCalledWith({
+        take: size,
+        skip: page * (page - 1),
+        where: {
+          phone: {
+            contains: clienPhone,
+          },
+        },
+        orderBy: {
+          createdAt: 'desc',
+        },
+      });
+    });
+
+    it('should return empty array when no lits match phone number', async () => {
+      // Arrange
+      const { size, page, clienPhone } = { size: 10, page: 1, clienPhone: '999999' };
+      prisma.litt.findMany.mockResolvedValue([]);
+      prisma.litt.count.mockResolvedValue(0);
+
+      // Act
+      const result = await repository.getLitsByPhone(size, page, clienPhone);
+
+      // Assert
+      expect(result.page).toBe(page);
+      expect(result.data).toHaveLength(0);
+      expect(result.total).toBe(0);
+      expect(result.totalPages).toBe(0);
+    });
+  });
+
+  describe('getLitsByEstate', () => {
+    it('should return lits by estate name', async () => {
+      // Arrange
+      const lits = [
+        {
+          id: '1',
+          client: 'Test Client',
+          company: 'Test Company',
+          estateName: 'Test Estate',
+          phone: '1234567890',
+          email: 'test@test.com',
+          estateId: '1',
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+        {
+          id: '2',
+          client: 'Test Client 2',
+          company: 'Test Company',
+          estateName: 'Test Estate',
+          phone: '0987654321',
+          email: 'test2@test.com',
+          estateId: '2',
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+      ];
+
+      const { size, page, estate } = { size: 10, page: 1, estate: 'Test Estate' };
+      prisma.litt.findMany.mockResolvedValue(lits);
+      prisma.litt.count.mockResolvedValue(lits.length);
+
+      // Act
+      const result = await repository.getLitsByEstate(size, page, estate);
+
+      // Assert
+      expect(result.page).toBe(page);
+      expect(result.data).toHaveLength(lits.length);
+      expect(result.total).toBe(lits.length);
+      expect(result.totalPages).toBe(1);
+      expect(prisma.litt.findMany).toHaveBeenCalledWith({
+        take: size,
+        skip: page * (page - 1),
+        where: {
+          estateName: {
+            contains: estate,
+          },
+        },
+        orderBy: {
+          createdAt: 'desc',
+        },
+      });
+    });
+
+    it('should return empty array when no lits match estate name', async () => {
+      // Arrange
+      const { size, page, estate } = { size: 10, page: 1, estate: 'Non Existent Estate' };
+      prisma.litt.findMany.mockResolvedValue([]);
+      prisma.litt.count.mockResolvedValue(0);
+
+      // Act
+      const result = await repository.getLitsByEstate(size, page, estate);
+
+      // Assert
+      expect(result.page).toBe(page);
+      expect(result.data).toHaveLength(0);
+      expect(result.total).toBe(0);
+      expect(result.totalPages).toBe(0);
+    });
+  });
+
+  describe('deleteLit', () => {
+    it('should delete a lit successfully', async () => {
+      // Arrange
+      const litId = '1';
+      prisma.litt.delete.mockResolvedValue({
+        id: '1',
+        client: 'client name',
+        company: 'company name',
+        estateName: 'estate Name 1',
+        phone: '999-999-8888',
+        email: 'email@test.com',
+        estateId: 'estate Id xxxx-xxx-xxxx',
+        createdAt: new Date(),
+      });
+
+      // Act & Assert
+      await expect(repository.deleteLit(litId)).resolves.not.toThrow();
+      expect(prisma.litt.delete).toHaveBeenCalledWith({
+        where: {
+          id: litId,
+        },
+      });
     });
   });
 });
