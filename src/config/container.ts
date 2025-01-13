@@ -8,8 +8,8 @@ import type { LitManagerService } from '../modules/lit-manager/services/interfac
 
 container.registerSingleton<LitManagerService>('LitManagerService', LitManagerImpl);
 container.registerSingleton(LitManagerController);
-container.registerSingleton(LitRepository);
+container.registerSingleton<LitRepository>('LitRepository', LitRepository);
 container.register('PrismaClient', {
-  useValue: Object.freeze(prisma),
+  useValue: prisma,
 });
 export { container };
