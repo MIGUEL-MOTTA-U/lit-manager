@@ -2,3 +2,6 @@ node_modules/
 dist/
 .env
 /coverage
+emails-data/*
+!emails-data/raw-emails-data/.gitkeep
+**.py
