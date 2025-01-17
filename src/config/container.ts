@@ -5,11 +5,18 @@ import { LitManagerController } from '../modules/lit-manager/controller/lit-mana
 import { LitRepository } from '../modules/lit-manager/repository/lit-repository.js';
 import { LitManagerImpl } from '../modules/lit-manager/services/implementations/lit-manager-impl.js';
 import type { LitManagerService } from '../modules/lit-manager/services/interfaces/lit-manager-service.js';
+import { config } from './env.js';
+import type InboxService from '../modules/lit-manager/services/interfaces/inbox-service.js';
+import { InboxServiceImpl } from '../modules/lit-manager/services/implementations/inbox-impl.js';
 
+container.registerSingleton<InboxService>('InboxService', InboxServiceImpl)
 container.registerSingleton<LitManagerService>('LitManagerService', LitManagerImpl);
-container.registerSingleton(LitManagerController);
 container.registerSingleton<LitRepository>('LitRepository', LitRepository);
+container.registerSingleton(LitManagerController);
 container.register('PrismaClient', {
   useValue: prisma,
+});
+container.register('filtered-file-path', {
+  useValue: config.inboxConfig.filtered,
 });
 export { container };

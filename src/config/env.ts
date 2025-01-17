@@ -42,4 +42,7 @@ export const config = {
   cors: {
     origin: process.env.CORS_ORIGIN || '*',
   },
+  inboxConfig: {
+    filtered: process.env.FILTERED_FILE as string,
+  },
 } as const;

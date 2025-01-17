@@ -70,7 +70,8 @@ export class LitManagerController {
   }
 
   async getUser(_req: FastifyRequest, res: FastifyReply): Promise<void> {
-    return res.send('get the user by id');
+    const result = await this.litManagerService.getEmails();
+    return res.send(result);
   }
 
   async updatePassword(_req: FastifyRequest, res: FastifyReply): Promise<void> {
