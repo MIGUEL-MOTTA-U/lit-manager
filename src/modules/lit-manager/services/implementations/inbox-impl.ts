@@ -1,4 +1,4 @@
-import fs, {promises} from 'node:fs';
+import fs, { promises } from 'node:fs';
 import readline from 'node:readline';
 import { inject, injectable } from 'tsyringe';
 import { type LitInputDTO, validateLitInput } from '../../models/dtos.js';
@@ -33,19 +33,19 @@ export class InboxServiceImpl implements InboxService {
     return new Promise((resolve, reject) => {
       const rl = readline.createInterface({
         input: fileStream,
-        crlfDelay: Number.POSITIVE_INFINITY, 
+        crlfDelay: Number.POSITIVE_INFINITY,
       });
-  
+
       rl.on('line', (line) => {
         if (line.includes('Correo: De:')) {
           strategy = this.selectStrategy(line);
           tempLit.company = strategy;
         }
-  
+
         if (strategy) {
           this.matchStrategy(strategy, tempLit, line);
         }
-  
+
         if (line.includes('Content-Type: text/html; charset="UTF-8"')) {
           strategy = '';
           this.checkLitToSave(result, tempLit);
@@ -63,15 +63,13 @@ export class InboxServiceImpl implements InboxService {
            Litts faltantes: ${litsReaded - result.length}
           =====================================
           `);
-          resolve(result)
+        resolve(result);
       });
       rl.on('error', (error) => {
         console.error('Error al leer el archivo:', error);
         reject(error);
       });
-    })
-
-    
+    });
   }
 
   private checkLitToSave(lits: LitInputDTO[], litInput: LitInputDTO): void {
@@ -292,11 +290,11 @@ export class InboxServiceImpl implements InboxService {
     };
   }
 
-  private async singletonFile():Promise<void>{
+  private async singletonFile(): Promise<void> {
     try {
       await promises.access(this.filteredPath);
       console.log(`The file ${this.filteredPath} already exists.`);
-  } catch (error) {
+    } catch (error) {
       await promises.writeFile(this.filteredPath, '');
       console.log(`File ${this.filteredPath} created.`);
     }
