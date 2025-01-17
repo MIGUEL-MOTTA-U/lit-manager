@@ -3,5 +3,12 @@ dist/
 .env
 /coverage
 emails-data/*
-!emails-data/raw-emails-data/.gitkeep
 **.py
+
+# Obtener solamente la carpeta
+!emails-data/emails-data/*
+emails-data/emails-data/
+!emails-data/emails-source-filtered
+!emails-data/raw-emails-data/
+emails-data/raw-emails-data/*
+!emails-data/raw-emails-data/.gitkeep
