@@ -1,4 +1,9 @@
-import type { LitOutputDTO, NotificationDTO, PaginatedResult } from '../../models/dtos.js';
+import type {
+  LitInputDTO,
+  LitOutputDTO,
+  NotificationDTO,
+  PaginatedResult,
+} from '../../models/dtos.js';
 
 export interface LitManagerService {
   getLits(data: unknown): Promise<PaginatedResult<LitOutputDTO>>;
@@ -10,5 +15,6 @@ export interface LitManagerService {
   deleteLit(data: unknown): Promise<void>;
   getNotificationInfo(): Promise<NotificationDTO>;
   updateNotification(notification: NotificationDTO): Promise<void>;
+  getEmails(): Promise<LitInputDTO[]>;
 }
 export type { LitManagerService as default };

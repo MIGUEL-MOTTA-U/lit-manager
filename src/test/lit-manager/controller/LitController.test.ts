@@ -192,7 +192,6 @@ describe('LitManagerController', () => {
       expect(mockServer.get).toHaveBeenCalledWith('/lit', expect.any(Function));
       expect(mockServer.post).toHaveBeenCalledWith('/lit', expect.any(Function));
       expect(mockServer.delete).toHaveBeenCalledWith('/lit', expect.any(Function));
-      // ... y así sucesivamente para todas las rutas
     });
   });
 });

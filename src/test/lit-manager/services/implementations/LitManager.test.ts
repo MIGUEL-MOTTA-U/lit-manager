@@ -1,8 +1,10 @@
 import { describe, expect, it, vi } from 'vitest';
+import { mockDeep } from 'vitest-mock-extended';
 import { ZodError } from 'zod';
 import { LitManagerExceptions } from '../../../../modules/lit-manager/models/exceptions.js';
 import type { LitRepository } from '../../../../modules/lit-manager/repository/lit-repository.js';
 import { LitManagerImpl } from '../../../../modules/lit-manager/services/implementations/lit-manager-impl.js';
+import type InboxService from '../../../../modules/lit-manager/services/interfaces/inbox-service.js';
 describe('LitManagerImpl', () => {
   const repo = {
     create: vi.fn(),
@@ -14,7 +16,8 @@ describe('LitManagerImpl', () => {
     deleteLit: vi.fn(),
   } as unknown as LitRepository;
 
-  const litManager = new LitManagerImpl(repo);
+  const inboxService = mockDeep<InboxService>();
+  const litManager = new LitManagerImpl(repo, inboxService);
 
   describe('createLitt', () => {
     it('should create a Litt', async () => {

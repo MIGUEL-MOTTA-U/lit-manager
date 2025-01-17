@@ -1,5 +1,6 @@
 import { inject, injectable } from 'tsyringe';
 import {
+  type LitInputDTO,
   type LitOutputDTO,
   type NotificationDTO,
   type PaginatedResult,
@@ -8,10 +9,18 @@ import {
 } from '../../models/dtos.js';
 import { LitManagerExceptions } from '../../models/exceptions.js';
 import type { LitRepository } from '../../repository/lit-repository.js';
+import type InboxService from '../interfaces/inbox-service.js';
 import type { LitManagerService } from '../interfaces/lit-manager-service.js';
+
 @injectable()
 export class LitManagerImpl implements LitManagerService {
-  constructor(@inject('LitRepository') private litRepository: LitRepository) {}
+  constructor(
+    @inject('LitRepository') private litRepository: LitRepository,
+    @inject('InboxService') private inboxService: InboxService,
+  ) {}
+  getEmails(): Promise<LitInputDTO[]> {
+    return this.inboxService.getFilteredEmails();
+  }
   async createLit(litInput: unknown): Promise<LitOutputDTO> {
     const validatedLit = validateLitInput(litInput);
     return this.litRepository.create(validatedLit);
