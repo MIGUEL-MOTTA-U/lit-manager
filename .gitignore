@@ -1,0 +1,11 @@
+node_modules/
+dist/
+.env
+/coverage
+**.py
+
+# Obtener solamente la carpeta
+emails-data/*
+!emails-data/raw-emails-data/
+emails-data/raw-emails-data/*
+!emails-data/raw-emails-data/.gitkeep
